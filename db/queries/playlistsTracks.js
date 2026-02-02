@@ -8,6 +8,5 @@ export const createPlaylistTrack = async ({ playlistId, trackId }) => {
   `;
 
   const { rows: [newPlaylistTrack] } = await db.query(sql, [playlistId, trackId]);
-  console.log("NEW JUNCTION: ", newPlaylistTrack);
   return newPlaylistTrack;
 }

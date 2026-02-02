@@ -8,6 +8,5 @@ export const createPlaylist = async ({ name, description }) => {
   `;
 
   const { rows: [playlist] } = await db.query(sql, [name, description]);
-  console.log("NEW PLAYLIST: ", playlist);
   return playlist;
 }

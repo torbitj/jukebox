@@ -7,7 +7,6 @@ export const createTrack = async ({ name, duration }) => {
     RETURNING *
   `;
 
-  const { rows: [newTrack] } = await db.query(sql, [name, duration])
-  console.log("NEW TRACK: ", newTrack);
+  const { rows: [newTrack] } = await db.query(sql, [name, duration]);
   return newTrack;
 }

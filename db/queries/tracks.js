@@ -10,3 +10,12 @@ export const createTrack = async ({ name, duration }) => {
   const { rows: [newTrack] } = await db.query(sql, [name, duration]);
   return newTrack;
 }
+
+export const getAllTracks = async () => {
+  const sql = `
+    SELECT * FROM tracks
+  `;
+
+  const { rows: tracks } = await db.query(sql);
+  return tracks;
+}

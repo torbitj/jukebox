@@ -1,15 +1,22 @@
-DROP IF EXISTS playlist_tracks;
-DROP IF EXISTS tracks;
-DROP IF EXISTS playlist;
+DROP TABLE IF EXISTS playlist_tracks;
+DROP TABLE IF EXISTS tracks;
+DROP TABLE IF EXISTS playlists;
 
-CREATE TABLE playlist (
-
+CREATE TABLE playlists (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL
 );
 
 CREATE TABLE tracks (
-
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  duration INTEGER NOT NULL
 );
 
 CREATE TABLE playlist_tracks (
-
+  id SERIAL PRIMARY KEY,
+  playlist_id INTEGER NOT NULL REFERENCES playlists.id ON DELETE CASCADE,
+  track_id INTEGER NOT NULL REFERENCES tracks.id ON DELETE CASCADE,
+  UNIQUE (playlist_id, track_id)
 );

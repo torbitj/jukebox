@@ -1,5 +1,6 @@
 import db from "#db/client";
 import { createPlaylist } from "./queries/playlists.js";
+import { createPlaylistTrack } from "./queries/playlistsTracks.js";
 import { createTrack } from "./queries/tracks.js";
 
 await db.connect();
@@ -17,7 +18,7 @@ async function seed() {
     }
     await createPlaylist(newPlaylist);
     // Create 20 Tracks
-    for (let newTrack = 1; newTrack <= 2; newTrack++) {
+    for (let seedTrack = 1; seedTrack <= 2; seedTrack++) {
       const duration = Math.floor(Math.random() * 599000) + 100000;
       const newTrack = {
         name: `Track${trackCount}`,
@@ -33,7 +34,9 @@ async function seed() {
   for (let playlistId = 1; playlistId <= 10; playlistId++) {
     if (playlistId % 2 == 1) {
       for (let trackCounter = 1; trackCounter <= 3; trackCounter++) {
-        
+        const newPlaylistTrack = { playlistId, trackId };
+        await createPlaylistTrack(newPlaylistTrack);
+        trackId++;
       }
       trackId++
     }

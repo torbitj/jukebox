@@ -19,3 +19,13 @@ export const getAllPlaylists = async () => {
   const { rows: playlists } = await db.query(sql);
   return playlists;
 }
+
+export const getPlaylistById = async (id) => {
+  const sql = `
+    SELECT * FROM playlists
+    WHERE playlists.id = $1
+  `;
+
+  const { rows: [playlist] } = await db.query(sql, [id]);
+  return playlist;
+}

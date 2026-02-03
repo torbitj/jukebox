@@ -6,3 +6,8 @@ export default app;
 
 app.use('/tracks', tracksRouter)
 app.use('/playlists', playlistsRouter)
+
+app.use((err, req, res, next) => {
+  console.log(err)
+  res.status(500).send("Something went wrong!");
+})

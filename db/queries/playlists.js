@@ -10,3 +10,12 @@ export const createPlaylist = async ({ name, description }) => {
   const { rows: [playlist] } = await db.query(sql, [name, description]);
   return playlist;
 }
+
+export const getAllPlaylists = async () => {
+  const sql = `
+    SELECT * FROM playlists
+  `;
+
+  const { rows: playlists } = await db.query(sql);
+  return playlists;
+}

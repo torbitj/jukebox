@@ -39,6 +39,5 @@ export const getPlaylistTracks = async (id) => {
   `;
   
   const { rows: tracks } = await db.query(sql, [id]);
-  console.log(tracks);
   return tracks;
 }

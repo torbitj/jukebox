@@ -1,8 +1,10 @@
-import { getAllPlaylists, getPlaylistById, getPlaylistTracks } from '#db/queries/playlists';
+import { createPlaylist, getAllPlaylists, getPlaylistById, getPlaylistTracks } from '#db/queries/playlists';
 import express from 'express';
 
 const playlistsRouter = express.Router();
 export default playlistsRouter;
+
+playlistsRouter.use(express.json())
 
 playlistsRouter.get('/', async(req, res, next) => {
   const playlists = await getAllPlaylists();
@@ -31,4 +33,16 @@ playlistsRouter.get('/:id/tracks', async(req, res, next) => {
   const playlistId = req.playlist.id;
   const tracks = await getPlaylistTracks(playlistId);
   res.send(tracks)
+})
+
+playlistsRouter.post('/', async(req, res, next) => {
+  if (!req.body) return res.status(400).send("Need a body");
+  const { name, description } = req.body;
+  if (!name || !description) return res.status(400).send("Need to include name and description");
+  const newPlaylist = await createPlaylist(req.body);
+  res.status(201).send(newPlaylist);
+})
+
+playlistsRouter.post('/:id/tracks', (req, res, next) => {
+  res.send("Loading...")
 })

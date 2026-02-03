@@ -1,0 +1,64 @@
+import { createPlaylist, getAllPlaylists, getPlaylistById, getPlaylistTracks } from '#db/queries/playlists';
+import { createPlaylistTrack, trackAlreadyInPlaylist } from '#db/queries/playlistsTracks';
+import { getTrackById } from '#db/queries/tracks';
+import express from 'express';
+
+const playlistsRouter = express.Router();
+export default playlistsRouter;
+
+playlistsRouter.use(express.json())
+
+playlistsRouter.get('/', async(req, res, next) => {
+  const playlists = await getAllPlaylists();
+  res.send(playlists);
+})
+
+playlistsRouter.param('id', async(req, res, next) => {
+  const inputId = req.params.id;
+  let validId = true;
+  for (let i = 0; i < inputId.length; i++) {
+    if (isNaN(inputId[i])) validId = false;
+  }
+  const playlistId = Number(inputId);
+  if (playlistId < 0 || !validId) return res.status(400).send("Id must be a positive integer");
+  const foundPlaylist = await getPlaylistById(playlistId);
+  if (!foundPlaylist) return res.status(404).send("Playlist not found")
+  req.playlist = foundPlaylist;
+  next();
+})
+
+playlistsRouter.get('/:id', async (req, res, next) => {
+  res.send(req.playlist);
+})
+
+playlistsRouter.get('/:id/tracks', async(req, res, next) => {
+  const playlistId = req.playlist.id;
+  const tracks = await getPlaylistTracks(playlistId);
+  res.send(tracks)
+})
+
+playlistsRouter.post('/', async(req, res, next) => {
+  if (!req.body) return res.status(400).send("Need a body");
+  const { name, description } = req.body;
+  if (!name || !description) return res.status(400).send("Need to include name and description");
+  const newPlaylist = await createPlaylist(req.body);
+  res.status(201).send(newPlaylist);
+})
+
+playlistsRouter.post('/:id/tracks', async (req, res, next) => {
+  if (!req.body) return res.status(400).send("Missing body");
+  const { trackId } = req.body;
+  if (!trackId) return res.status(400).send("Missing trackId")
+  let validId = true;
+  for (let i = 0; i < trackId.length; i++) {
+    if (isNaN(trackId[i])) validId = false;
+  }
+  if (trackId < 0 || !validId) return res.status(400).send("Id must be a positive integer");
+  const foundTrack = await getTrackById(trackId);
+  if (!foundTrack) return res.status(400).send("Track does not exist");
+  const newPlaylistTrack = { playlistId: req.playlist.id, trackId };
+  const isAlreadyInPlaylist = await trackAlreadyInPlaylist(newPlaylistTrack);
+  if (isAlreadyInPlaylist) return res.status(400).send("Track already in playlist")
+  const addedTrack = await createPlaylistTrack(newPlaylistTrack);
+  res.status(201).send(addedTrack);
+})

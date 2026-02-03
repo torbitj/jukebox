@@ -29,3 +29,16 @@ export const getPlaylistById = async (id) => {
   const { rows: [playlist] } = await db.query(sql, [id]);
   return playlist;
 }
+
+export const getPlaylistTracks = async (id) => {
+  const sql = `
+    SELECT tracks.* FROM playlists
+    JOIN playlists_tracks ON playlists.id = playlists_tracks.playlist_id
+    JOIN tracks ON playlists_tracks.track_id = tracks.id
+    WHERE playlists.id = $1
+  `;
+  
+  const { rows: tracks } = await db.query(sql, [id]);
+  console.log(tracks);
+  return tracks;
+}
